@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';  // Change useHistory to useNavigate
+import { Link, useNavigate } from 'react-router-dom'; // Change useHistory to useNavigate
 import { useDispatch, useSelector } from 'react-redux';
 import { setAdminData } from '../components/Redux/Slices/AdminSlice'; // Action to update admin data
-import axios from 'axios';  // Import Axios for making API calls
+import axios from 'axios'; // Import Axios for making API calls
 import adminSVG from '../Assets/createaccount.svg'; // Make sure you have the appropriate SVG for the admin sign-up
+import { toast, ToastContainer } from 'react-toastify'; // Import Toastify
+// import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
 
 const AdminReg = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();  // useNavigate instead of useHistory
+  const navigate = useNavigate(); // useNavigate instead of useHistory
   
   // Get form data from Redux store
-const {name,email,phone,branch} = useSelector((state) => state.admin.data);
-  console.log(name, email, phone, branch)
+  const { name, email, phone, branch } = useSelector((state) => state.admin.data);
+  console.log(name, email, phone, branch);
   // Add the role for the admin form
   const role = 'admin'; // For the admin form, role is hardcoded as "admin"
 
@@ -46,17 +48,30 @@ const {name,email,phone,branch} = useSelector((state) => state.admin.data);
         role: 'admin', // Hardcoded role as admin
         password
       };
-      console.log(adminData)
+      console.log(adminData);
   
       const response = await axios.post('http://localhost:8090/api/create', adminData);
       if (response.status === 200) {
         console.log('Admin created successfully:', response.data);
+        
+        // Show success toast message
+        toast.success('Admin account created successfully!', {
+          position: 'top-right',
+          autoClose: 5000,
+        });
+
         navigate('/login'); // Redirect to login page after successful registration
       }
     } catch (err) {
       // Handle error
       console.error('Error during registration:', err);
       setError('Failed to register. Please try again later.');
+
+      // Show error toast message
+      toast.error('Failed to register. Please try again later.', {
+        position: 'top-right',
+        autoClose: 5000,
+      });
     } finally {
       setLoading(false);
     }
@@ -65,7 +80,7 @@ const {name,email,phone,branch} = useSelector((state) => state.admin.data);
   // Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    dispatch(setAdminData({ name, value }));  // Dispatching the input change to the Redux store
+    dispatch(setAdminData({ name, value })); // Dispatching the input change to the Redux store
   };
 
   return (
@@ -140,7 +155,7 @@ const {name,email,phone,branch} = useSelector((state) => state.admin.data);
             {/* Role is hardcoded for admin */}
             <input type="hidden" name="role" value="admin" />
 
-            {error && <div className="text-red-500 mb-4">{error}</div>}  {/* Show error if any */}
+            {error && <div className="text-red-500 mb-4">{error}</div>} {/* Show error if any */}
             
             <div className="mt-6">
               <button
@@ -163,6 +178,9 @@ const {name,email,phone,branch} = useSelector((state) => state.admin.data);
           </form>
         </div>
       </div>
+
+      {/* ToastContainer to show toast notifications */}
+      <ToastContainer />
     </div>
   );
 };

@@ -1,19 +1,33 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Options from "./Designation/Options";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showOptions, setShowOptions] = useState(false); 
+  const [showOptions, setShowOptions] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  useEffect(() => {
+    const token = Cookies.get("verification_token");
+    if (token) {
+      const role = Cookies.get("user_role");
+      if (role === "admin") {
+        navigate("/aDashboard", { replace: true });
+      } else {
+        navigate("/studentDashboard", { replace: true });
+      }
+    }
+  }, [navigate]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -22,11 +36,23 @@ const Login = () => {
         formData,
         { withCredentials: true }
       );
-      Cookies.set("verification_token", response.data.token, { expires: 7 });
-      navigate("/studentdashboard");
+      const { token, role } = response.data;
+      Cookies.set("verification_token", token, { expires: 7 });
+      Cookies.set("user_role", role, { expires: 7 });
+
+      // Show success toast message
+      toast.success("Logged in successfully!", { position: "top-right" });
+
+      // Redirect to the correct dashboard based on the role
+      if (role === "admin") {
+        navigate("/aDashboard", { replace: true });
+      } else if (role === "student") {
+        navigate("/studentDashboard", { replace: true });
+      }
     } catch (error) {
       console.error(error);
       setError("Invalid Login Credentials");
+      toast.error("Invalid login credentials. Please try again.", { position: "top-right" });
     }
   };
 
@@ -92,7 +118,8 @@ const Login = () => {
         </p>
       </div>
 
-      {showOptions && <Options onClose={() => setShowOptions(false)} />} {/* Show the options modal */}
+      {showOptions && <Options onClose={() => setShowOptions(false)} />}
+      <ToastContainer />
     </div>
   );
 };

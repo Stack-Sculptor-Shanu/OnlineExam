@@ -1,13 +1,11 @@
-import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";  // Use NavLink
 import Cookies from "js-cookie";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const token = Cookies.get("verification_token")
-  console.log(token)
-  // const isAuthenticated = Cookies.get("verification_token");
-  // console.log(isAuthenticated)
+  const token = Cookies.get("verification_token");
+
   const handleLogout = () => {
     Cookies.remove("verification_token");
     navigate("/login");
@@ -25,17 +23,45 @@ const Navbar = () => {
               </span>
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 via-red-500 to-sky-500 text-transparent bg-clip-text">
-              AptiNest
+              PrepNGo
             </span>
           </Link>
         </div>
 
         {/* Navbar Sections: Home, About, Contact, Privacy */}
         <div className="flex space-x-8">
-          <Link to="/" className="text-lg font-semibold hover:text-blue-500">Home</Link>
-          <Link to="/about" className="text-lg font-semibold hover:text-blue-500">About</Link>
-          <Link to="/contact" className="text-lg font-semibold hover:text-blue-500">Contact</Link>
-          <Link to="/privacy" className="text-lg font-semibold hover:text-blue-500">Privacy</Link>
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive ? "text-lg font-semibold text-blue-500" : "text-lg font-semibold text-black hover:text-blue-500"
+            }
+          >
+            Home
+          </NavLink>
+          <NavLink
+            to="/about"
+            className={({ isActive }) =>
+              isActive ? "text-lg font-semibold text-blue-500" : "text-lg font-semibold text-black hover:text-blue-500"
+            }
+          >
+            About
+          </NavLink>
+          <NavLink
+            to="/contact"
+            className={({ isActive }) =>
+              isActive ? "text-lg font-semibold text-blue-500" : "text-lg font-semibold text-black hover:text-blue-500"
+            }
+          >
+            Contact
+          </NavLink>
+          <NavLink
+            to="/privacy"
+            className={({ isActive }) =>
+              isActive ? "text-lg font-semibold text-blue-500" : "text-lg font-semibold text-black hover:text-blue-500"
+            }
+          >
+            Privacy
+          </NavLink>
         </div>
 
         {/* Login/Logout Button */}

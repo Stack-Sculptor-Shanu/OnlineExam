@@ -17,6 +17,17 @@ const Instruction = () => {
   const navigate = useNavigate();
 
   const handleSubmit = () => {
+    const navbar = document.getElementById("navigationbar");
+          if (navbar) navbar.style.display = "none";
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+            document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari, Edge
+            document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+            document.documentElement.msRequestFullscreen();
+        }
     navigate('/exampage');
   };
 
